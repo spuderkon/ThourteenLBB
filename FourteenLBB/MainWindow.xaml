@@ -1,0 +1,67 @@
+﻿<Window x:Class="FourteenLBB.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:Converter="clr-namespace:FourteenLBB.Converters"
+        xmlns:local="clr-namespace:FourteenLBB"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="700" Width="400">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Column="0" Grid.Row="0" DataContext="{Binding SelectedProduct}" Grid.ColumnSpan="2">
+            <TextBlock Text="Модель"/>
+            <TextBox Text="{Binding Model, UpdateSourceTrigger=PropertyChanged}" x:Name="Model"/>
+            <TextBlock Text="Цена, руб."/>
+            <TextBox Text="{Binding Price, UpdateSourceTrigger=PropertyChanged}" x:Name="Price"/>
+            <TextBlock Text="Категория:"/>
+            <TextBlock Text="{Binding Category, UpdateSourceTrigger=PropertyChanged}"/>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock>
+                    <Run Text="Скидка в:"/>
+                    <Run x:Name="DiscountField" Text="{Binding ElementName=DisountSlider, Path=Value}"/>
+                    <Run Text="%"></Run>
+                </TextBlock>
+            </StackPanel>
+            <Slider x:Name="DisountSlider" Minimum="0" Maximum="100"  TickFrequency="0.5" IsSnapToTickEnabled="True" Value="{Binding Discount, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DiscountFormula}}"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <StackPanel>
+                    <TextBlock Text="Выберите категорию"/>
+                    <ComboBox Width="385" x:Name="ComBoxCateg" SelectedItem="{Binding Category}">
+                    </ComboBox>
+                </StackPanel>
+            </StackPanel>
+            <Button Content="Скидка для всей категории" Click="Button_Click" Margin="50,5"/>
+            <Button Click="Add_Click" Margin="50,5">Добавить товар</Button>
+            <Button Click="Delete_Click" Margin="50,5">Удалить товар</Button>
+            <Button Margin="50,5" Click="Button_Click_1">Перезаписать</Button>
+        </StackPanel>
+        <ListBox Grid.Column="0" ItemsSource="{Binding Products}" SelectedItem="{Binding SelectedProduct}" Grid.RowSpan="1" Margin="0,290,0,0">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Margin="5">
+                        <TextBlock FontSize="18">
+                             <Run Text="{Binding Path=Model}"/>
+                        </TextBlock>
+                        <TextBlock>
+                            <Run Text="Категория:"/>
+                            <Run Text="{Binding Path = Category}"/>
+                        </TextBlock>
+                        <TextBlock>
+                            <Run Text="Цена:"/>
+                            <Run Text="{Binding Path = Price}" TextDecorations="{Binding Path=Discount, Converter={StaticResource StrikelineConverter}}"/>
+                            <Run Text="руб."/>
+                        </TextBlock>
+                        <TextBlock Visibility="{Binding Path=Discount, Converter={StaticResource DiscountConverter}}" Foreground="Red" FontSize="12" FontWeight="Bold">
+                            <Run Text="Скидка! Новая цена:"/>
+                            <Run Text="{Binding Path = DiscountPrice,Mode=OneWay,StringFormat={}{0}}"/>
+                            <Run Text="рублей"/>
+                        </TextBlock>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Grid>
+</Window>
